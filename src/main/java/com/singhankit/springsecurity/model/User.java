@@ -1,7 +1,6 @@
-package com.singhankit.springsecurity.service;
+package com.singhankit.springsecurity.model;
 
-import com.singhankit.springsecurity.entity.User;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,22 +10,24 @@ import java.util.List;
 /**
  * @author _singhankit
  */
-@RequiredArgsConstructor
-public class SecurityUser implements UserDetails {
-    private final User user;
+@Setter
+public class User implements UserDetails {
+
+    private String username;
+    private String password;
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(()->"Read");
+        return List.of(()->"read");
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return username;
     }
 
     @Override
