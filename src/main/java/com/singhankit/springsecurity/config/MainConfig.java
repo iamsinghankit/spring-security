@@ -1,28 +1,35 @@
 package com.singhankit.springsecurity.config;
 
-import com.singhankit.springsecurity.security.CsrfTokenLoggerFilter;
-import com.singhankit.springsecurity.security.CustomCsrfTokenRepository;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.List;
 
 /**
  * @author _singhankit
  */
 @Configuration
 public class MainConfig extends WebSecurityConfigurerAdapter {
+
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);//for login form
-        http.csrf().disable();// GENERALLY DON'T do this :)
-        http.csrf(c -> {
-            c.ignoringAntMatchers("/csrfdiabled/**");
-            c.csrfTokenRepository(new CustomCsrfTokenRepository());
+        http.csrf().disable();
+        http.authorizeRequests().anyRequest().permitAll();
+        //don't do customization here only, create a different class for all the customization
+        http.cors(c -> {
+            CorsConfigurationSource source = request -> {
+                CorsConfiguration cors = new CorsConfiguration();
+                cors.setAllowedOrigins(List.of("*"));
+                cors.setAllowedMethods(List.of("GET","POST")); // value should be taken from properties files for
+                // specific environment
+                return cors;
+            };
+            c.configurationSource(source);
         });
 
-        http.addFilterAfter(new CsrfTokenLoggerFilter(),
-                CsrfFilter.class
-        );
     }
 }
